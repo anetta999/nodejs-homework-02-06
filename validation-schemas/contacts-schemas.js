@@ -15,10 +15,12 @@ export const addContactSchema = Joi.object({
     "string.base": `"phone" should be a type of 'text'`,
     "string.min": `"name" should have a minimum length of {#limit}`,
   }),
-});
+}).or("name", "email", "phone");
 
-export const updateContactSchema = Joi.object({
-  name: Joi.string().min(3).max(30),
-  email: Joi.string().email(),
-  phone: Joi.string().min(14).max(14),
-});
+export const updateContactSchema = Joi.object()
+  .keys({
+    name: addContactSchema.extract("name").optional(),
+    email: addContactSchema.extract("email").optional(),
+    phone: addContactSchema.extract("phone"),
+  })
+  .or("name", "email", "phone");
