@@ -1,8 +1,10 @@
 import express from "express";
 import contactsControllers from "../../controllers/contacts-controllers.js";
 import { validateBody } from "../../decorators/validateBody.js";
+import { isValidId } from "../../middlewares/isValidId.js";
 import {
   addContactSchema,
+  contactFavoriteSchema,
   updateContactSchema,
 } from "../../validation-schemas/contacts-schemas.js";
 
@@ -15,9 +17,16 @@ contactsRouter
 
 contactsRouter
   .route("/:contactId")
-  .get(contactsControllers.getContactById)
-  .delete(contactsControllers.deleteContactById)
+  .get(isValidId, contactsControllers.getContactById)
+  .delete(isValidId, contactsControllers.deleteContactById)
   .put(
     validateBody(updateContactSchema),
     contactsControllers.updateContactById
   );
+
+contactsRouter.patch(
+  "/:contactId/favorite",
+  isValidId,
+  validateBody(contactFavoriteSchema),
+  contactsControllers.updateContactById
+);

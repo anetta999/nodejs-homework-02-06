@@ -1,6 +1,5 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js";
-import contactsService from "../models/contacts.js";
-import { HttpError } from "../utils/HttpError.js";
+import contactsService from "../services/contacts.js";
 
 const getAllContacts = controllerWrapper(async (req, res, next) => {
   const contacts = await contactsService.listContacts();
@@ -10,9 +9,7 @@ const getAllContacts = controllerWrapper(async (req, res, next) => {
 const getContactById = controllerWrapper(async (req, res, next) => {
   const { contactId } = req.params;
   const contact = await contactsService.getContactById(contactId);
-  if (!contact) {
-    throw new HttpError(404, "Not found");
-  }
+
   res.json(contact);
 });
 
@@ -29,19 +26,12 @@ const updateContactById = controllerWrapper(async (req, res, next) => {
     req.body
   );
 
-  if (!updatedContact) {
-    throw new HttpError(404, "Not found");
-  }
-
   res.json(updatedContact);
 });
 
 const deleteContactById = controllerWrapper(async (req, res, next) => {
   const { contactId } = req.params;
-  const deletedContact = await contactsService.removeContact(contactId);
-  if (!deletedContact) {
-    throw new HttpError(404, "Not found");
-  }
+  await contactsService.removeContact(contactId);
 
   res.json({ message: "Contact deleted" });
 });
