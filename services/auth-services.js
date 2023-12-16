@@ -3,6 +3,7 @@ import { HttpError } from "../utils/HttpError.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import gravatar from "gravatar";
 
 const { JWT_SECRET } = process.env;
 
@@ -15,9 +16,11 @@ const signUpService = async (body) => {
   }
 
   const hashpassword = await bcrypt.hash(body.password, 10);
+  const avatarURL = gravatar.url(body.email);
   const newUser = await User.create({
     ...body,
     password: hashpassword,
+    avatarURL,
   });
 
   return newUser;
