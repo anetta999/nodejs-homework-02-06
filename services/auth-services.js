@@ -34,6 +34,10 @@ const logInService = async (body) => {
     throw new HttpError(401, "Email or password is wrong");
   }
 
+  if (!user.verify) {
+    throw HttpError(401, "Email is not verified");
+  }
+
   const isPasswordCorrect = await bcrypt.compare(body.password, user.password);
   if (!isPasswordCorrect) {
     throw new HttpError(401, "Email or password is wrong");
